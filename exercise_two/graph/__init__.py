@@ -43,7 +43,7 @@ class Vertex:
     def info(self):
         """Returns information about the vertex.
         Returns:
-
+            A tuple containing the id and the value of the vertex.
         """
         return self.id, self.value
 
@@ -88,6 +88,26 @@ class Edge:
             None
         """
         self.match = match
+
+    def set_sink(self, sink):
+        """Set the current sink to another vertex.
+        Args:
+            sink: A vertex type object.
+
+        Returns:
+            None
+        """
+        self.sink = sink
+
+    def set_source(self, source):
+        """Set the current source to another vertex.
+        Args:
+            source: A vertex type object.
+
+        Returns:
+            None
+        """
+        self.source = source
 
     def get_weight(self):
         """Getter returning the weight of the edge.
@@ -209,6 +229,54 @@ class OverlapGraph:
         self.vertices.append(vertex)
 
         return _id
+
+    def remove_edge(self, id):
+        """Removes an edge with the given id from the graph.
+        Args:
+            id: Id of the edge to remove.
+
+        Returns:
+            True when removing was successful, False otherwise.
+        """
+        try:
+            self.edges.remove(self.get_edge(id))
+            return True
+        except ValueError:
+            return False
+
+    def remove_vertex(self, id):
+        """Removes an vertex with the given id from the graph.
+        Args:
+            id: Id of the vertex to remove.
+
+        Returns:
+            True when removing was successful, False otherwise.
+        """
+        try:
+            self.edges.remove(self.get_edge(id))
+            return True
+        except ValueError:
+            return False
+
+    def get_edge(self, id):
+        """Returns the edge with a given id.
+        Args:
+            id: Id of the edge.
+
+        Returns:
+            An object of type Edge. Returns None if id could not be found.
+        """
+        return next((edge for edge in self.edges if edge.id == id), None)
+
+    def get_vertex(self, id):
+        """Returns the vertex with a given id.
+        Args:
+            id: Id of the vertex.
+
+        Returns:
+            An object of type Vertex. Returns None if id could not be found.
+        """
+        return next((edge for edge in self.edges if edge.id == id), None)
 
     def get_vertex_ids(self):
         """Get a list of ids of all existing vertices.
