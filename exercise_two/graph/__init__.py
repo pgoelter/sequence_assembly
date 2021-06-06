@@ -53,10 +53,13 @@ class Edge:
     """
 
     def __init__(self, id: int, source: Vertex, sink: Vertex, weight=None, match=None):
-        """Construct an edge by passing an id and a tuple containing two vertices of type Vertex.
+        """Construct an edge of a directed graph.
         Args:
             id: A unique identifier.
-            adjacent_vertices: Two elements of type Vertex. These to vertices must be adjacent as they define the edge.
+            source: Element of type Vertex. Represents the start node of an edge.
+            sink: Element of type Vertex. Represents the end node of an edge.
+            weight: A weight assigned to an edge.
+            match: Largest overlapping prefix/suffix pair of the values in source and sink. Specific to DNA sequencing.
         """
         self.id = id
 
@@ -76,6 +79,14 @@ class Edge:
         self.weight = weight
 
     def set_match(self, match):
+        """Set the attribute match of an edge. In this case this means the overlapping part of the two strings of a
+        sink and a source vertex.
+        Args:
+            match: Largest overlapping prefix/suffix pair of the values in source and sink. Specific to DNA sequencing.
+
+        Returns:
+            None
+        """
         self.match = match
 
     def get_weight(self):
@@ -83,6 +94,7 @@ class Edge:
         Returns:
             Integer representing the weight of the edge.
         """
+        return self.weight
 
     def get_sink(self):
         """Getter for returning the sink vertex.
@@ -111,17 +123,24 @@ class OverlapGraph:
     """
 
     def __init__(self, edges: list = None, vertices: list = None):
+        """Creates an overlap graph object.
+        Args:
+            edges: A list of elements of type Edge, representing the edges of a graph.
+            vertices: A list of elements of type Vertex, representing the vertices of a graph.
+        """
         self.edges = edges if edges else []
         self.vertices = vertices if vertices else []
 
     @staticmethod
     def build_from_fragments(fragments):
-        """
+        """Constructs an overlap graph based on a list of fragments (DNA reads).
+        Determines the edges automatically by searching the largest overlapping suffix/prefix pairs for every
+        combination of fragments. The weight of the edges is defined by the length of the overlapping string.
         Args:
-            fragments:
+            fragments: A list of fragments. Each fragment is a string based on the alphabet {A, T, C, G}.
 
         Returns:
-
+            An OverlapGraph object with edges and vertices.
         """
         graph = OverlapGraph()
 
@@ -132,10 +151,12 @@ class OverlapGraph:
         return graph
 
     def determine_edges(self):
-        """Determine the edges with respective weight. Based on the fragments every vertex holds.
-        For every fragment find the largest overlap to another node and add an edge if an overlap exists.
+        """Determines the edges automatically by searching the largest overlapping suffix/prefix pairs for every
+        combination of fragments. The weight of the edges is defined by the length of the overlapping string.
+        Note:
+            String matching uses a naive approach by comparing each suffix and prefix of each string.
         Returns:
-
+            None
         """
         for vertex in self.vertices:
             for _vertex in self.vertices:
@@ -146,6 +167,12 @@ class OverlapGraph:
                         self.add_edge(source=vertex, sink=_vertex, weight=ov["weight"], match=ov["overlap"])
 
     def merge(self):
+        """Merge vertices, starting with the vertex pairs connected by the edge with the highest weight. Then update all
+        edges accordingly. Repeat this step until no more vertices can be merged.
+
+        Returns:
+            None
+        """
         pass
 
     def add_edge(self, source, sink, weight, match):
