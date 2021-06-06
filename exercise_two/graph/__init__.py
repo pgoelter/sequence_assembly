@@ -1,4 +1,8 @@
+import random
 from typing import Tuple
+
+from graphviz import Digraph
+
 from .utils import read_fragments, find_largest_overlaps, overlap
 
 
@@ -52,7 +56,7 @@ class Edge:
     """Class representing a single edge of a graph. An edge is defined by two adjacent vertices.
     """
 
-    def __init__(self, id: int, source: Vertex, sink: Vertex, weight=None, match=None):
+    def __init__(self, id: int, source: Vertex, sink: Vertex, weight=None, match=None, pos_start=None, pos_end=None):
         """Construct an edge of a directed graph.
         Args:
             id: A unique identifier.
@@ -67,7 +71,12 @@ class Edge:
         self.sink = sink
 
         self.weight = weight
+
         self.match = match
+
+        # Array indices where the match can be found in the string of the sink (sink contains the matching prefix)
+        self.pos_start = pos_start
+        self.pos_end = pos_end
 
     def set_weight(self, weight):
         """Set the weight of an edge.
@@ -88,6 +97,10 @@ class Edge:
             None
         """
         self.match = match
+
+    def set_match_position(self, match_position):
+        self.pos_start = match_position[0]
+        self.pos_end = match_position[1]
 
     def set_sink(self, sink):
         """Set the current sink to another vertex.
@@ -137,6 +150,9 @@ class Edge:
         """
         return self.match
 
+    def get_match_position(self):
+        return self.pos_start, self.pos_start
+
 
 class OverlapGraph:
     """Class representing a graph with edges and vertices.
@@ -184,7 +200,28 @@ class OverlapGraph:
                     ov = overlap(vertex.get_value(), _vertex.get_value())
 
                     if ov["weight"] != 0:
-                        self.add_edge(source=vertex, sink=_vertex, weight=ov["weight"], match=ov["overlap"])
+                        self.add_edge(source=vertex,
+                                      sink=_vertex,
+                                      weight=ov["weight"],
+                                      match=ov["overlap"],
+                                      pos_start=ov["prefix_start"],
+                                      pos_end=ov["prefix_end"]
+                                      )
+
+    @staticmethod
+    def merge_fragments(source, sink, slice_positions):
+        """Merge two fragments from corresponding vertices representing source and sink of an edge.
+        Args:
+            source: Origin vertex of an edge.
+            sink:  Target vertex of an edge.
+            slice_positions: Array indices for the starting and ending array indices of sink.value.
+
+        Returns:
+            A string representing the merge fragments of source and sink.
+        """
+        merged_reads = source.get_value() + sink.get_value()[slice_positions[1]:]
+
+        return merged_reads
 
     def merge(self):
         """Merge vertices, starting with the vertex pairs connected by the edge with the highest weight. Then update all
@@ -193,26 +230,127 @@ class OverlapGraph:
         Returns:
             None
         """
-        # todo
-        pass
+        # Only for graph output
+        p = 0
+        while self.edges:
+            max_edge = sorted(self.edges, key=lambda e: e.weight)[-1]
 
-    def add_edge(self, source, sink, weight, match):
+            #########
+            max_edges = [edge for edge in self.edges if edge.weight == max_edge.weight]
+            max_edge = random.choice(max_edges)
+            #########
+
+            source = max_edge.get_source()
+            sink = max_edge.get_sink()
+
+            old_source_id = source.get_id()
+            old_sink_id = sink.get_id()
+
+            self.edges.remove(max_edge)
+
+            merged_fragment = OverlapGraph.merge_fragments(source=source, sink=sink,
+                                                           slice_positions=(max_edge.pos_start, max_edge.pos_end))
+
+            merged_vertex = self.add_vertex(value=merged_fragment)
+
+            # Alle ausgehenden Kanten von source löschen
+            source_outgoing = self.find_outgoing_edges(source)
+            for edge in source_outgoing:
+                self.edges.remove(edge)
+
+            # Alle eingehenden Kanten zu source bleiben bestehen bis auf Kanten von sink
+            edges_to_remove = [edge for edge in self.edges if edge.sink.id == source.id and edge.source.id == sink.id]
+            for _edge in edges_to_remove:
+                self.edges.remove(_edge)
+
+            # Alle ausgehenden Kanten von sink bleiben bestehen außer asugehende Kante zu source.
+            # Wird oben schon gelöscht.
+            # Do nothing!
+
+            # Alle eingehenden Kanten zu sink löschen
+            sink_incoming = self.find_incoming_edges(sink)
+            for edge in sink_incoming:
+                self.edges.remove(edge)
+
+            self.vertices.remove(source)
+            self.vertices.remove(sink)
+
+            # Ersetze in allen Kanten die ids von source und sink durch die id vom neuen Knoten und aktualisiere die
+            # gewichte falls nötig.
+            for i, edge in enumerate(self.edges):
+                if edge.sink.get_id() == old_sink_id or edge.sink.get_id() == old_source_id:
+                    self.edges[i].sink = merged_vertex
+
+                    ov = overlap(self.edges[i].source.get_value(), merged_vertex.get_value())
+
+                    self.edges[i].set_weight(ov["weight"])
+                    self.edges[i].set_match(ov["overlap"])
+                    self.edges[i].set_match_position((ov["prefix_start"], ov["prefix_end"]))
+
+                if edge.source.get_id() == old_sink_id or edge.source.get_id() == old_source_id:
+                    self.edges[i].source = merged_vertex
+
+                    ov = overlap(merged_vertex.get_value(), self.edges[i].sink.get_value())
+
+                    self.edges[i].set_weight(ov["weight"])
+                    self.edges[i].set_match(ov["overlap"])
+                    self.edges[i].set_match_position((ov["prefix_start"], ov["prefix_end"]))
+
+            dot = Digraph(comment='Overlap Graph')
+            edges = self.get_edges()
+            vertices = self.get_vertices()
+            # Add vertices to directed graph
+            for v in vertices:
+                dot.node(str(v.get_id()), v.get_value())
+
+            # Add edges to directed graph
+            for e in edges:
+                dot.edge(str(e.source.get_id()), str(e.sink.get_id()), label=str(e.weight))
+
+            # Render graph and show it in browser
+            dot.render(f'g{p}.gv', view=True)
+            p += 1
+
+    def find_outgoing_edges(self, vertex):
+        """Find all edges starting from a vertex.
+        Args:
+            vertex: An object of type Vertex.
+        Returns:
+            A list of objects of type Edge.
+        """
+        vertex_id = vertex.get_id()
+
+        return [edge for edge in self.edges if edge.get_source().get_id() == vertex_id]
+
+    def find_incoming_edges(self, vertex):
+        """Find all edges leading to a vertex.
+        Args:
+            vertex: An object of type Vertex.
+        Returns:
+            A list of objects of type Edge.
+        """
+        vertex_id = vertex.get_id()
+
+        return [edge for edge in self.edges if edge.get_sink().get_id() == vertex_id]
+
+    def add_edge(self, source, sink, weight, match, pos_start, pos_end):
         """Adds an edge to the graph.
         Args:
             source: Origin vertex of the edge.
             sink: Target vertex of the edge.
             weight: Weight that can be added to the edge.
             match: In the context of DNA assembly, the overlapping string from both fragments.
-
+            pos_start: Array index prefix start in sink.value.
+            pos_end: Array index prefix end in sink.value.
         Returns:
             The id of the edge.
         """
         edge_ids = self.get_edge_ids()
         _id = 1 if not edge_ids else max(edge_ids) + 1
 
-        edge = Edge(id=_id, source=source, sink=sink, weight=weight, match=match)
+        edge = Edge(id=_id, source=source, sink=sink, weight=weight, match=match, pos_start=pos_start, pos_end=pos_end)
         self.edges.append(edge)
-        return _id
+        return edge
 
     def add_vertex(self, value):
         """Adds a vertex to the graph.
@@ -228,7 +366,7 @@ class OverlapGraph:
         vertex = Vertex(id=_id, value=value)
         self.vertices.append(vertex)
 
-        return _id
+        return vertex
 
     def remove_edge(self, id):
         """Removes an edge with the given id from the graph.
