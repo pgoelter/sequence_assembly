@@ -2,3 +2,5 @@
 .idea/
 /exercise_two/string_matching/
 /__pycache__/
+/exercise_two/*.gv
+/exercise_two/*.gv.pdf
