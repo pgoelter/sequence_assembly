@@ -10,8 +10,8 @@ class Vertex:
         """Construct a vertex by passing an id a fragment and a list of edges.
         Args:
             id: A unique identifier.
-            value: The value the nod holds. in this casse e.g. a DNA  (e.g. GATCGTACTGACT).
-            edges: A list of elements of type Edge.
+            value: The value the vertex holds. in this case e.g. a DNA  (e.g. GATCGTACTGACT).
+
         """
         self.id = id
         self.value = value
@@ -177,34 +177,74 @@ class OverlapGraph:
         pass
 
     def add_edge(self, source, sink, weight, match):
+        """Adds an edge to the graph.
+        Args:
+            source: Origin vertex of the edge.
+            sink: Target vertex of the edge.
+            weight: Weight that can be added to the edge.
+            match: In the context of DNA assembly, the overlapping string from both fragments.
+
+        Returns:
+            The id of the edge.
+        """
         edge_ids = self.get_edge_ids()
         _id = 1 if not edge_ids else max(edge_ids) + 1
 
         edge = Edge(id=_id, source=source, sink=sink, weight=weight, match=match)
         self.edges.append(edge)
+        return _id
 
     def add_vertex(self, value):
+        """Adds a vertex to the graph.
+        Args:
+            value: A value associated with the vertex.
+
+        Returns:
+            The id of the vertex.
+        """
         vertex_ids = self.get_vertex_ids()
         _id = 1 if not vertex_ids else max(vertex_ids) + 1
 
         vertex = Vertex(id=_id, value=value)
         self.vertices.append(vertex)
 
+        return _id
+
     def get_vertex_ids(self):
+        """Get a list of ids of all existing vertices.
+        Returns:
+            List of vertex ids.
+        """
         if self.vertices:
             return [v.id for v in self.vertices]
         return None
 
     def get_edge_ids(self):
+        """Get a list of ids of all existing edges.
+        Returns:
+            List of edge ids.
+        """
         if self.edges:
             return [e.id for e in self.edges]
         return None
 
     def get_edges(self):
+        """Get all existing edges.
+        Returns:
+            A list of elements of type Edge.
+        """
         return self.edges
 
     def get_vertices(self):
+        """Get all existing vertices.
+        Returns:
+            A list of elements of type Vertex.
+        """
         return self.vertices
 
     def get_fragments(self):
+        """Get all existing fragments.
+        Returns:
+            A list of strings whereas each string represents a read (fragment).
+        """
         return [vertex.get_value() for vertex in self.vertices]
