@@ -41,7 +41,7 @@ Miniconda Link: https://docs.conda.io/en/latest/miniconda.html
 ### Ausführen via IDE oder Konsole
 Um das Tool auszuführen wird vorausgesetzt, dass die im Installationsschritt aufgeführte virtuelle Umgebung installiert wurde.  
 
-####Konsole
+#### Konsole
 1. Umgebung aktivieren: 
     ````bash
     conda activate Bioinformatik
@@ -57,7 +57,7 @@ Um das Tool auszuführen wird vorausgesetzt, dass die im Installationsschritt au
     python assembler.py --help
     ````
    
-####IDE
+#### IDE
 1. Anaconda Umgebung in IDE einbinden (z.B. Pycharm)
 2. Eintrittspunkt ist **exercise_two/assembler.py**
 3. Dort können entsprechend Pfad zur Datei, etc.. zum Ausprobieren auch von Hand eingetragen werden.
@@ -89,7 +89,6 @@ optional arguments:
                        nodes to merge a random edge with maximum weight gets picked if there are more than one edges
                        with the same weight among those with the highest weight in the graph.
 ````
-###
 # Aufgabe 2
 **Anmerkung:** Nicht bearbeitet, da nur für 2er Gruppen vorgesehen.
 # Aufgabe 3
