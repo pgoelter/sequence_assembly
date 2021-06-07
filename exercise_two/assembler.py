@@ -57,6 +57,7 @@ if __name__ == "__main__":
     overlap_graph.set_print(print_graphs)
     overlap_graph.set_print_result_only(print_only_result)
 
+
     overlap_graph.set_random(random)
 
     # - - - - - - Assembly - - - - - -
