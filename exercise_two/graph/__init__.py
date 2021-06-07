@@ -315,6 +315,7 @@ class OverlapGraph:
         _p = 0
 
         if self.print_graph:
+            print("Do I Print? ", self.print_graph)
             edges = self.get_edges()
             vertices = self.get_vertices()
             show_graph(edges=edges, vertices=vertices, name=f"graph_{_p}")
@@ -383,14 +384,15 @@ class OverlapGraph:
                     self.edges[i].set_match(ov["overlap"])
                     self.edges[i].set_match_position((ov["prefix_start"], ov["prefix_end"]))
             _p += 1
-            if self.print_graph:
+            if self.print_only_result or self.print_graph:
                 edges = self.get_edges()
                 vertices = self.get_vertices()
                 show_graph(edges=edges, vertices=vertices, name=f"graph_{_p}")
-        if len(vertices) == 1:
-            return vertices[0].value
-        elif len(vertices) > 1:
-            return vertices
+
+        if len(self.vertices) == 1:
+            return self.vertices[0].value
+        elif len(self.vertices) > 1:
+            return self.vertices
         else:
             print("Something went wrong!?")
 
@@ -509,7 +511,6 @@ class OverlapGraph:
         Returns:
             None
         """
-        self.print_graph = True
         self.print_only_result = val
 
     def get_edge(self, id):

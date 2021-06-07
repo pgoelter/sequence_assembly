@@ -24,7 +24,7 @@ if __name__ == "__main__":
                              'Assembles the fragments by building the overlap graph, finding a hamilton path with max '
                              'summed up weight. Then merges all nodes of the path together.')
 
-    parser.add_argument('--random', action='store_true', default=False,
+    parser.add_argument('--random', action='store_true', default=True,
                         help='When choosing option assemble_greedy this option can be turned on so each time for '
                              'choosing nodes to merge a random edge with maximum weight gets picked if there are more '
                              'than one edges with the same weight among those with the highest weight in the graph.')
@@ -56,7 +56,6 @@ if __name__ == "__main__":
     # Only works with a valid installation of graphviz (see: https://graphviz.org/download/)
     overlap_graph.set_print(print_graphs)
     overlap_graph.set_print_result_only(print_only_result)
-
 
     overlap_graph.set_random(random)
 
