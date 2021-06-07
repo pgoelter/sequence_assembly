@@ -1,3 +1,6 @@
+from graphviz import Digraph
+
+
 def read_fragments(filename: str):
     """Reads fragments from a given file.
     Args:
@@ -86,3 +89,125 @@ def find_largest_overlaps(string_one, string_two):
     one_overlaps_suffix_two = overlap(string_two, string_one)
 
     return two_overlaps_suffix_one, one_overlaps_suffix_two
+
+
+def search_hamilton_path(graph, vertex_count, start_vertex, path=None, edges_visited=None, path_weight=None):
+    """Find a hamilton path in a given graph from a given starting vertex. Search by traversing the edges of the graph
+    Args:
+        graph: The graph to search in
+        vertex_count: The total amount of vertices in the graph.
+        start_vertex: The vertex to start the search from.
+        path: Variable to hold the path of vertices which form a potential hamiltonian path.
+        edges_visited: A list of edges already visited.
+        path_weight: The summed up path weight of a path.
+
+    Note: # TODO
+        Currently Broken! Does not work as intended!
+    Returns:
+        A list of lists, whereas each element is a list of Vertices which form a hamilton path.
+    """
+    if edges_visited is None:
+        edges_visited = []
+
+    if path is None:
+        path = []
+
+    if start_vertex not in path:
+        path.append(start_vertex)
+
+    if path_weight is None:
+        path_weight = 0
+
+    if len(path) == vertex_count:
+        path.append(path_weight)
+        return path, edges_visited
+
+    outgoing_edges = graph.find_outgoing_edges(start_vertex)
+
+    for visited in edges_visited:
+        if visited in outgoing_edges:
+            outgoing_edges.remove(visited)
+
+    if outgoing_edges:
+        for edge in outgoing_edges:
+            if edge not in edges_visited and edge.sink not in path:
+
+                edges_visited.append(edge)
+
+                path_weight += edge.weight
+
+                candidate = search_hamilton_path(graph, vertex_count, edge.sink, path, edges_visited, path_weight)
+
+                if candidate:
+                    return candidate
+    else:
+
+        print("Dead end!")
+
+
+def hamilton(graph, vertex_count, start_vertex, path=None, visited=None):
+    """Find a hamilton path in a given graph from a given starting vertex. Search by traversing the nodes.
+    Args:
+        graph: The graph to search in
+        vertex_count: The total amount of vertices in the graph.
+        start_vertex: The vertex to start the search from.
+        path: Variable to hold the path of vertices which form a potential hamiltonian path.
+        visited: A list of vertices that were already visited.
+
+    Note: # TODO
+        Currently Broken! Does not work as intended!
+
+    Returns:
+        A list of lists, whereas each element is a list of Vertices which form a hamilton path.
+    """
+    if visited is None:
+        visited = []
+
+    if path is None:
+        path = []
+
+    if start_vertex not in path:
+        path.append(start_vertex)
+
+    if len(path) == vertex_count:
+        return path
+
+    sucessor_vertices = [edge.sink for edge in graph.find_outgoing_edges(start_vertex)]
+
+    if sucessor_vertices:
+        for successor in sucessor_vertices:
+            if successor not in set(visited):
+                # Then visit
+                visited.append(successor)
+
+                res_path = [element for element in path]  #
+
+                candidate = hamilton(graph, vertex_count, successor, res_path, visited)
+
+                if candidate:
+                    return candidate
+                print("Dead end!")
+
+
+def show_graph(edges, vertices, name):
+    """Prints the given graph out by utilizing the python graphviz interface.
+    Args:
+        edges: A list of objects of type Edge.
+        vertices: A list of objects of type Vertex.
+        name: The name of the file where the graph gets stored.
+
+    Returns:
+        None
+    """
+    dot = Digraph(comment=name)
+
+    # Add vertices to directed graph
+    for v in vertices:
+        dot.node(str(v.get_id()), v.get_value())
+
+    # Add edges to directed graph
+    for e in edges:
+        dot.edge(str(e.source.get_id()), str(e.sink.get_id()), label=str(e.weight))
+
+    # Render graph and show it in browser
+    dot.render(name, view=True)
