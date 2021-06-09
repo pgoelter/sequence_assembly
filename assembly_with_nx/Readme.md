@@ -3,7 +3,7 @@
 # Aufgabe 1
 ### Files und Ordner
 ````
-excercise_two
+assembly_with_nx
 |
 |----data             // Enthält Beispieldateien mit Fragmenten zum Ausführen
 |      |--frag.dat
@@ -32,9 +32,9 @@ Miniconda Link: https://docs.conda.io/en/latest/miniconda.html
     conda env export > environment.yml
     ````  
 
-3. Nach erfolgreicher Installation wurde die Umgebung mit Namen **Bioinformatik** installiert. Diese kann nun mit folgendem Befehl aktiviert werden:
+3. Nach erfolgreicher Installation wurde die Umgebung mit Namen **bioinfo** installiert. Diese kann nun mit folgendem Befehl aktiviert werden:
     ````bash
-    conda activate Bioinformatik
+    conda activate bioinfo
     ````
 4. Installation abgeschlossen.
 
@@ -44,9 +44,9 @@ Um das Tool auszuführen wird vorausgesetzt, dass die im Installationsschritt au
 #### Konsole
 1. Umgebung aktivieren: 
     ````bash
-    conda activate Bioinformatik
+    conda activate bioinfo
     ````
-2. Ins Projektverzeichnis wechseln (../exercise_two/)
+2. Ins Projektverzeichnis wechseln (../assembly_with_nx/)
 3. Tool über Konsolenbefehl starten:
     ````bash
     python assembler.py "Pfad/zu/.dat/Datei"
@@ -59,7 +59,7 @@ Um das Tool auszuführen wird vorausgesetzt, dass die im Installationsschritt au
    
 #### IDE
 1. Anaconda Umgebung in IDE einbinden (z.B. Pycharm)
-2. Eintrittspunkt ist **exercise_two/assembler.py**
+2. Eintrittspunkt ist **assembly_with_nx/assembler.py**
 3. Dort können entsprechend Pfad zur Datei, etc.. zum Ausprobieren auch von Hand eingetragen werden.
 
 #### Starten mit der vorgefertigten .exe
