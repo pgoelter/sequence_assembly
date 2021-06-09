@@ -1,5 +1,5 @@
 # Bioinformatik - Übung 2
-###Git Repository: https://github.com/pgoelter/sequence_assembly/tree/main/exercise_two
+###Git Repository: https://github.com/pgoelter/sequence_assembly/tree/main/assembly_with_nx
 # Aufgabe 1
 ### Files und Ordner
 ````
