@@ -78,6 +78,8 @@ assembler.exe --print_graph "data/frag1.dat"
 ````bash
 assembler.exe --print_only_result "data/frag1.dat"
 ````
+
+** Alle mit der .exe Datei ausgeführten Befehle können analog auch mit python ausgeführt werden indem 'assembler.exe' durch 'python assembler.py' ersetzt wird.
 #### Verfügbare Optionen
 ````bash
 assembler.exe --help
