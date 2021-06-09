@@ -65,7 +65,19 @@ Um das Tool auszuführen wird vorausgesetzt, dass die im Installationsschritt au
 #### Starten mit der vorgefertigten .exe
 Im Projektverzeichnis liegt ein eigenständiges executable (**assembler.exe**). Diese Datei kann analog wie im Schritt **Konsole** beschrieben über eine beliebige Konsole genutzt werden.  
 **Hiermit kann das Tool auch ohne vorige Installation der virtuellen Umgebung ausgeführt werden.**
+````bash
+assembler.exe "data/frag1.dat"
+````
 
+**Mit weiterem Befehl können alle zwischenschritte in welchen der graph bearbeitet werden als pdf durch die Graphviz Software ausgegeben werden:**
+````bash
+assembler.exe --print_graph "data/frag1.dat"
+````
+
+**Oder auch nur der resultierende Graph. Hierbei handelt es sich bei erfolgreicher Zusammensetzung um einen einzelnen Knoten. Falls die Sequenz nicht zusammensetzbar ist sind die übrigen Knoten zu sehen:**
+````bash
+assembler.exe --print_only_result "data/frag1.dat"
+````
 #### Verfügbare Optionen
 ````bash
 assembler.exe --help
