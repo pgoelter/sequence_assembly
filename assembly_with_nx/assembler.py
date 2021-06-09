@@ -16,7 +16,7 @@ if __name__ == "__main__":
                         help='Prints only the resulting graph. Should be a single node if everything worked.')
 
     parser.add_argument('--assemble_hamilton', action='store_true', default=False,
-                        help='NOTE: CURRENTLY NOT WORKING AS INTENDED! '
+                        help='NOTE: CURRENTLY NOT WORKING! Todos: Calculation orientation; Updating the graph after finding the hamilton path; '
                              'Assembles the fragments by building the overlap graph, finding a hamilton path with max '
                              'summed up weight. Then merges all nodes of the path together.')
 
