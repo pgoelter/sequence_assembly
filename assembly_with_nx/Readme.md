@@ -69,10 +69,9 @@ Im Projektverzeichnis liegt ein eigenständiges executable (**assembler.exe**). 
 #### Verfügbare Optionen
 ````bash
 assembler.exe --help
-usage: assembler.exe [-h] [--print_graphs] [--print_only_result] [--assemble_greedy] [--assemble_hamilton] [--random]
-                     path
+usage: assembler.exe [-h] [--print_graphs] [--print_only_result] [--assemble_hamilton] [--assemble_greedy] path
 
-Assemble DNA fragments from a *.dat file.
+Assemble DNA fragments from a *.frag file.
 
 positional arguments:
   path                 The path containing the DNA fragments (reads).
@@ -81,13 +80,11 @@ optional arguments:
   -h, --help           show this help message and exit
   --print_graphs       Print all graphs in between each merge of two nodes.
   --print_only_result  Prints only the resulting graph. Should be a single node if everything worked.
+  --assemble_hamilton  NOTE: CURRENTLY NOT WORKING! Todos: Calculate orientation; Updating the graph after
+                       finding the hamilton path; Assembles the fragments by building the overlap graph, finding a
+                       hamilton path with max summed up weight. Then merges all nodes of the path together.
   --assemble_greedy    Assembles the fragments by building the overlap graph and merging the nodes afterward by
                        picking the edges with the biggest weight and breaking ties arbitrarily.
-  --assemble_hamilton  NOTE: CURRENTLY NOT WORKING AS INTENDED! Assembles the fragments by building the overlap graph,
-                       finding a hamilton path with max summed up weight. Then merges all nodes of the path together.
-  --random             When choosing option assemble_greedy this option can be turned on so each time for choosing
-                       nodes to merge a random edge with maximum weight gets picked if there are more than one edges
-                       with the same weight among those with the highest weight in the graph.
 ````
 # Aufgabe 2
 **Anmerkung:** Nicht bearbeitet, da nur für 2er Gruppen vorgesehen.
