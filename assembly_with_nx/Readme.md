@@ -92,4 +92,4 @@ optional arguments:
 # Aufgabe 2
 **Anmerkung:** Nicht bearbeitet, da nur für 2er Gruppen vorgesehen.
 # Aufgabe 3
-**Anmerkung:** Leider konnte ich diese Aufgabe aus Zeitgründen nicht mehr bearbeiten
+**Anmerkung:** Leider konnte ich diese Aufgabe aus Zeitgründen nicht mehr vollständig bearbeiten. Die Suche von im Graph vorkommenden Hamiltonpfaden funktioniert, jedoch ist der Algorithmus für die komplementären Fragmente nicht implementiert.

@@ -425,7 +425,7 @@ class OverlapGraph:
             source: Origin vertex of the edge.
             sink: Target vertex of the edge.
             weight: Weight that can be added to the edge.
-            match: In the context of DNA assembly, the overlapping string from both fragments.
+            match: In the context of DNA assembly_with_nx, the overlapping string from both fragments.
             pos_start: Array index prefix start in sink.value.
             pos_end: Array index prefix end in sink.value.
         Returns:
