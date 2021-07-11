@@ -2,7 +2,7 @@ import copy
 
 import networkx as nx
 
-from .utils import overlap, show_graph, read_fragments, hamilton
+from .utils import overlap, show_graph, read_fragments, hamilton, calc_orientation, get_good_orientation
 
 
 def build_overlap_graph(fragments):

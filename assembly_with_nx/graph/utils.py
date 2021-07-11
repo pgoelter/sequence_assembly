@@ -1,5 +1,14 @@
+import copy
+
 import networkx as nx
 from graphviz import Digraph
+
+COMPLEMENTS = {
+    "A": "T",
+    "G": "C",
+    "C": "G",
+    "T": "A"
+}
 
 
 def read_fragments(filename: str):
@@ -37,6 +46,108 @@ def is_prefix(prefix: str, word: str):
         True if prefix, False otherwise.
     """
     return word.startswith(prefix)
+
+
+def weight(fragment_one, fragment_two):
+    """Returns the weight of edge from fragment_one to fragment_two or the length of the longest suffix from
+    fragment_one, which is also prefix to fragment_two.
+    Args:
+        fragment_one: Fragment to read.
+        fragment_two: Fragment to read.
+    Returns:
+        The weight of an edge defined by two fragments.
+    """
+    return overlap(fragment_one, fragment_two)["weight"]
+
+
+def complement(fragment: str):
+    """Returns the complement of a given fragment.
+    Args:
+        fragment: Fragment to read.
+
+    Returns:
+        Complement of fragment.
+    """
+    c = reversed([COMPLEMENTS[l] for l in list(fragment)])
+    return "".join(c)
+
+
+def same(fragment_one: str, fragment_two: str):
+    """Largest possible edge weight if fragment_one and fragment_two belong to one orientation.
+    Args:
+        fragment_one: Fragment to read.
+        fragment_two: Fragment to read.
+
+    Returns:
+        Largest possible edge weight.
+    """
+    return max(weight(fragment_one, fragment_two), weight(fragment_two, fragment_one))
+
+
+def opp(fragment_one: str, fragment_two: str):
+    """Largest possible edge weight if fragment_one and complement of fragment_two belong to one orientation.
+    Args:
+        fragment_one: Fragment to read.
+        fragment_two: Fragment to read.
+
+    Returns:
+        Largest possible edge weight.
+    """
+    c_two = complement(fragment_two)
+
+    return max(weight(fragment_one, c_two), weight(c_two, fragment_one))
+
+
+def _get_orientations_input(fragments: list):
+    combinations = []
+    for f in fragments:
+        _copy_fragments = copy.deepcopy(fragments)
+        _copy_fragments.remove(f)
+        _tuple = (f, _copy_fragments)
+        combinations.append(_tuple)
+    return combinations
+
+
+def get_good_orientation(fragments: list):
+    to_calculate = _get_orientations_input(fragments)
+
+    orientations_with_weight = []
+
+    for _input in to_calculate:
+        orientation, _weight = calc_orientation(_input[0], _input[1])
+        orientations_with_weight.append((orientation, _weight))
+
+    max_weight_orientation, _w = sorted(orientations_with_weight, key=lambda e: e[1])[-1]
+
+    return max_weight_orientation
+
+
+def calc_orientation(start_fragment: str, fragments: list):
+    """Calculate an orientation from a given start fragment and a list of fragments.
+    Args:
+        start_fragment: Fragment to start with (first element in set O)
+        fragments: Fragments to check.
+    Returns:
+        Set of fragments which represents an Orientation.
+    """
+    O = [start_fragment]
+    others = fragments
+
+    while others:
+        sum_same = 0
+        sum_opp = 0
+        fragment_to_test = others.pop(0)
+        for fragment in O:
+            sum_same += same(fragment, fragment_to_test)
+            sum_same += same(fragment_to_test, fragment)
+
+            sum_opp += opp(fragment, fragment_to_test)
+            sum_opp += opp(fragment_to_test, fragment)
+        if sum_same < sum_opp:
+            O.append(complement(fragment_to_test))
+        elif sum_opp <= sum_same:
+            O.append(fragment_to_test)
+    return O, sum_same + sum_opp
 
 
 def overlap(string_one: str, string_two: str):
@@ -154,3 +265,27 @@ def show_graph(edges, vertices, name):
 
     # Render graph and show it in browser
     dot.render(name, view=True)
+
+
+if __name__ == "__main__":
+    ll = [
+        "ATCGCGAACGC",
+        "GATCGTACTGACT",
+        "GAACGCTCGATCGTA",
+        "CTTTCAGGATCGAC",
+        "TCGACTGGACTAGTACGACTGACT",
+        "CATCATTATCTGACAAGC",
+        "GACTGACTTTCA",
+        "CTGGACTACATGGCATCATTA",
+        "GTCACACAACTTACTCATCATCTAACGGT",
+        "GCTCGATCGTACTGA",
+        "TACTGACTGACT",
+        "TCAGGATCGACTGGACTA",
+        "TACGACTGACTGGACT",
+        "GCATGCATCATTA",
+        "ACAAGCTGTGTCACAC",
+        "AGCTGTGTCACACAACTTACTC"
+
+    ]
+
+    print()

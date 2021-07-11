@@ -14,7 +14,9 @@ if __name__ == "__main__":
     parser.add_argument('--print_only_result',
                         action='store_true', default=False,
                         help='Prints only the resulting graph. Should be a single node if everything worked.')
-
+    parser.add_argument('--consider_orientation', action='store_true', default=True,
+                        help='If the input fragments are not only from a single strand, activate this option to assign \
+                        the fragments to an orientation, which then serves as input to the sequencer.')
     parser.add_argument('--assemble_hamilton', action='store_true', default=False,
                         help='NOTE: CURRENTLY NOT WORKING! Todos: Calculation orientation; Updating the graph after finding the hamilton path; '
                              'Assembles the fragments by building the overlap graph, finding a hamilton path with max '
@@ -30,6 +32,8 @@ if __name__ == "__main__":
     print_only_result = args.print_only_result
     print_graphs = args.print_graphs
 
+    consider_orientation = args.consider_orientation
+
     # How to assemble the sequence
     assemble_hamilton = args.assemble_hamilton
     assemble_greedy = args.assemble_greedy
@@ -41,6 +45,12 @@ if __name__ == "__main__":
 
     # Load fragments from file
     fragments = graph.read_fragments(args.path)
+    print("Without orientation: ", fragments)
+    if consider_orientation:
+        print("Calculate good orientation...")
+        fragments = graph.get_good_orientation(fragments)
+        print("Orientation calculated!")
+        print("With orientation: ", fragments)
 
     # Build overlap graph
     overlap_graph = graph.build_overlap_graph(fragments=fragments)
@@ -59,7 +69,8 @@ if __name__ == "__main__":
 
     if assemble_hamilton:
         # NOTE: Broken does not work!
-        raise NotImplementedError("Work in progress! Todos: Calculation orientation; Updating the graph after finding the hamilton path; ")
+        raise NotImplementedError(
+            "Work in progress! Todos: Calculation orientation; Updating the graph after finding the hamilton path; ")
         assembled_sequence = graph.assembly_hamilton(overlap_graph, print_only_result=print_only_result,
                                                      print_graph=print_graphs)
         if isinstance(assembled_sequence, str):
