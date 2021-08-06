@@ -265,27 +265,3 @@ def show_graph(edges, vertices, name):
 
     # Render graph and show it in browser
     dot.render(name, view=True)
-
-
-if __name__ == "__main__":
-    ll = [
-        "ATCGCGAACGC",
-        "GATCGTACTGACT",
-        "GAACGCTCGATCGTA",
-        "CTTTCAGGATCGAC",
-        "TCGACTGGACTAGTACGACTGACT",
-        "CATCATTATCTGACAAGC",
-        "GACTGACTTTCA",
-        "CTGGACTACATGGCATCATTA",
-        "GTCACACAACTTACTCATCATCTAACGGT",
-        "GCTCGATCGTACTGA",
-        "TACTGACTGACT",
-        "TCAGGATCGACTGGACTA",
-        "TACGACTGACTGGACT",
-        "GCATGCATCATTA",
-        "ACAAGCTGTGTCACAC",
-        "AGCTGTGTCACACAACTTACTC"
-
-    ]
-
-    print()

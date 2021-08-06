@@ -103,4 +103,13 @@ optional arguments:
 # Aufgabe 2
 **Anmerkung:** Nicht bearbeitet, da nur für 2er Gruppen vorgesehen.
 # Aufgabe 3
-**Anmerkung:** Leider konnte ich diese Aufgabe aus Zeitgründen nicht mehr vollständig bearbeiten. Die Suche von im Graph vorkommenden Hamiltonpfaden funktioniert, jedoch ist der Algorithmus für die komplementären Fragmente nicht implementiert.
+Die Orientierung zu einer gegebenen Sequenz von Fragmenten kann berechnet werden, indem bei der Ausführung der Parameter **--consider_orientation** übergeben wird. Standardmäßig ist diese Option nun aktiviert, der Parameter muss also nicht zwingend übergeben werden.
+Zur Funktionsweise: Zuerst wird die Orientierung berechnet und die daraus resultierende Orientierung wird als Input für den Sequenzer verwendet.
+````bash
+python assembler.py "data/frag.dat" --consider_orientation --verbose
+````  
+oder über die .exe:
+
+````bash
+assembler.exe "data/frag" --consider_orientation --verbose
+````

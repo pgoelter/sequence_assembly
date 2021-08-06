@@ -14,7 +14,7 @@ if __name__ == "__main__":
     parser.add_argument('--print_only_result',
                         action='store_true', default=False,
                         help='Prints only the resulting graph. Should be a single node if everything worked.')
-    parser.add_argument('--consider_orientation', action='store_true', default=True,
+    parser.add_argument('--consider_orientation', action='store_true', default=False,
                         help='If the input fragments are not only from a single strand, activate this option to assign \
                         the fragments to an orientation, which then serves as input to the sequencer.')
     parser.add_argument('--assemble_hamilton', action='store_true', default=False,
@@ -26,6 +26,9 @@ if __name__ == "__main__":
                         help='Assembles the fragments by building the overlap graph and merging the nodes afterward by '
                              'picking the edges with the biggest weight and breaking ties arbitrarily.')
 
+    parser.add_argument('--verbose', action='store_true', default=False,
+                        help='When verbose parameter stated, additional informations are printed out. Currently only used when --consider_orientation is used.')
+
     args = parser.parse_args()
 
     # Whether and how to print graphs if graphviz is installed
@@ -33,6 +36,8 @@ if __name__ == "__main__":
     print_graphs = args.print_graphs
 
     consider_orientation = args.consider_orientation
+
+    verbose = args.verbose
 
     # How to assemble the sequence
     assemble_hamilton = args.assemble_hamilton
@@ -45,12 +50,14 @@ if __name__ == "__main__":
 
     # Load fragments from file
     fragments = graph.read_fragments(args.path)
-    print("Without orientation: ", fragments)
+    if verbose:
+        print("Without orientation: ", fragments)
     if consider_orientation:
         print("Calculate good orientation...")
         fragments = graph.get_good_orientation(fragments)
         print("Orientation calculated!")
-        print("With orientation: ", fragments)
+        if verbose:
+            print("With orientation: ", fragments)
 
     # Build overlap graph
     overlap_graph = graph.build_overlap_graph(fragments=fragments)
